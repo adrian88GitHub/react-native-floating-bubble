@@ -17,6 +17,7 @@ import android.view.View;
 import android.content.Intent;
 import android.provider.Settings;
 import android.net.Uri;
+import android.widget.TextView;
 
 import com.txusballesteros.bubbles.BubbleLayout;
 import com.txusballesteros.bubbles.BubblesManager;
@@ -27,6 +28,7 @@ public class RNFloatingBubbleModule extends ReactContextBaseJavaModule {
   private BubblesManager bubblesManager;
   private final ReactApplicationContext reactContext;
   private BubbleLayout bubbleView;
+  private TextView tvBubble;
 
   public RNFloatingBubbleModule(ReactApplicationContext reactContext) {
     super(reactContext);
@@ -45,9 +47,9 @@ public class RNFloatingBubbleModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod // Notates a method that should be exposed to React
-  public void showFloatingBubble(int x, int y, final Promise promise) {
+  public void showFloatingBubble(int x, int y, String counter, final Promise promise) {
     try {
-      this.addNewBubble(x, y);
+      this.addNewBubble(x, y, counter);
       promise.resolve("");
     } catch (Exception e) {
       promise.reject("");
@@ -91,9 +93,10 @@ public class RNFloatingBubbleModule extends ReactContextBaseJavaModule {
     }
   }  
 
-  private void addNewBubble(int x, int y) {
+  private void addNewBubble(int x, int y, String counter) {
     this.removeBubble();
     bubbleView = (BubbleLayout) LayoutInflater.from(reactContext).inflate(R.layout.bubble_layout, null);
+    tvBubble = (TextView) bubbleView.findViewById(R.id.counter);
     bubbleView.setOnBubbleRemoveListener(new BubbleLayout.OnBubbleRemoveListener() {
       @Override
       public void onBubbleRemoved(BubbleLayout bubble) {
@@ -109,6 +112,7 @@ public class RNFloatingBubbleModule extends ReactContextBaseJavaModule {
       }
     });
     bubbleView.setShouldStickToWall(true);
+    tvBubble.setText(counter);
     bubblesManager.addBubble(bubbleView, x, y);
   }
 
